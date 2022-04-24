@@ -1,73 +1,91 @@
-//Estas constantes me las invente.... los valores no son reales.
-const seguroValue = 2.5;
-const cuota3 = 1.1;
-const cuota6 = 1.2;
-const cuota12 = 1.4;
+//rents.js
+class apartment {
+	constructor(address, rent, expenses, sellValue) {
+		this.address = address;
+		this.rent = parseFloat(rent);
+		this.expenses = parseFloat(expenses);
+		this.sellValue = parseFloat(sellValue);
+	}
+}
 
-function main() {
-	alert("Bienvenido a mi ejercicio de JavaScript\n" + "En este caso vamos a calcular el valor de un seguro de caucion\n\n");
+const apartments = [];
+apartments.push(new apartment("Altolaguirre al 2200", 50000, 11300, 0));
+apartments.push(new apartment("Av. Francisco Bilbao al 2300", 48000, 4500, 0));
+apartments.push(new apartment("Beruti 2819", 60000, 9800, 0));
+apartments.push(new apartment("Av Las Heras al 2300", 55000, 12000, 0));
+apartments.push(new apartment("Sarmiento al 2100", 45000, 5500, 0));
+apartments.push(new apartment("AV. DEL Libertador AL 5500", 55000, 12000, 0));
 
-	let alquiler = parseInt(prompt("Por favor ingresa el valor del alquiler (mensual):"));
-	let expensas = parseInt(prompt("Por favor ingresa el valor de las expensas:"));
+function rentsInitialize() {
+	let displayMessage = "Listado de alquileres:\n\n";
+	apartments.forEach(element => (displayMessage += `Direccion: ${element.address}\nAlquiler: ${element.rent}\nExpensas: ${element.expenses}\n\n`));
 
-	if (!alquilerValidar(alquiler) || !expensasValidar(expensas)) {
+	alert(displayMessage);
+}
+
+//surety.js (no se como importar funciones, vi como hacerlo pero no me funciona asi que ya fue jaja)
+const sureValue = 2.5;
+const inst3 = 1.1;
+const inst6 = 1.2;
+const inst12 = 1.4;
+
+function suretyInitialize() {
+	alert("Calcular valor de seguro de caucion\n\n");
+
+	let rent = parseInt(prompt("Por favor ingresa el valor del alquiler (mensual):"));
+	let expenses = parseInt(prompt("Por favor ingresa el valor de las expensas:"));
+
+	if (!valueValidate(rent) || !valueValidate(expenses)) {
 		return null;
 	} else {
-		let value = calcularSeguro(alquiler, expensas);
+		let value = suretyCalc(rent, expenses);
 		alert(
-			`El valor del seguro para ALQUILER: $${alquiler}, EXPENSAS: $${expensas} es de:\n` +
+			`El valor del seguro para ALQUILER: $${rent}, EXPENSAS: $${expenses} es de:\n` +
 				`Total en 1 pago: $${value}\n` +
-				`Cuota en 3 pagos: $${parseInt(calcularCuotas(value, 3) / 3)}; Total: $${calcularCuotas(value, 3)}\n` +
-				`Cuota en 6 pagos: $${parseInt(calcularCuotas(value, 6) / 6)}; Total: $${calcularCuotas(value, 6)}\n` +
-				`Cuota en 12 pagos: $${parseInt(calcularCuotas(value, 12) / 12)}; Total: $${calcularCuotas(value, 12)}`
+				`Cuota en 3 pagos: $${parseInt(installmentsCalc(value, 3) / 3)}; Total: $${installmentsCalc(value, 3)}\n` +
+				`Cuota en 6 pagos: $${parseInt(installmentsCalc(value, 6) / 6)}; Total: $${installmentsCalc(value, 6)}\n` +
+				`Cuota en 12 pagos: $${parseInt(installmentsCalc(value, 12) / 12)}; Total: $${installmentsCalc(value, 12)}`
 		);
 	}
 }
 
-function alquilerValidar(alquiler) {
-	if (alquiler <= 0) {
-		alert("El valor ingresado para el alquiler no es valido, debe ser un numero mayor a 0");
+function valueValidate(value) {
+	if (value <= 0) {
+		alert("El valor ingresado no es valido, debe ser un numero mayor a 0");
 		return false;
 	}
 	return true;
 }
 
-function expensasValidar(expensas) {
-	if (expensas <= 0) {
-		alert("El valor ingresado para las expensas no es valido, debe ser un numero mayor a 0");
-		return false;
-	}
-	return true;
+function suretyCalc(rent, expenses) {
+	return (rent + expenses) * sureValue;
 }
 
-function calcularSeguro(alquiler, expensas) {
-	return (alquiler + expensas) * seguroValue;
-}
+function installmentsCalc(subtotal, installments) {
+	if (installments != 1 && installments != 3 && installments != 6 && installments != 12) return subtotal;
 
-function calcularCuotas(subtotal, cuotas) {
-	if (cuotas != 1 && cuotas != 3 && cuotas != 6 && cuotas != 12) {
-		return subtotal;
-	}
-
-	switch (cuotas) {
+	switch (installments) {
 		case 3:
-			//Este for es para cumplir la consigna de usar un ciclo...
-			let aux = subtotal / cuotas;
-			let result = 0;
-
-			for (let i = 0; i < cuotas; i++) {
-				result += aux;
-			}
-
-			return parseInt(result * cuota3);
-			break;
-
+			return parseInt(subtotal * inst3);
 		case 6:
-			return parseInt(subtotal * cuota6);
-			break;
-
+			return parseInt(subtotal * inst6);
 		case 12:
-			return parseInt(subtotal * cuota12);
+			return parseInt(subtotal * inst12);
+	}
+}
+
+//code.js
+function main() {
+	let option = parseInt(
+		prompt("Seleccionar una de las siguientes funciones:\n" + "1. Calcular costo seguro de caucion\n" + "2. Mostrar alquileres disponibles")
+	);
+
+	switch (option) {
+		case 1:
+			suretyInitialize();
+			break;
+		case 2:
+			rentsInitialize();
 			break;
 	}
 }
