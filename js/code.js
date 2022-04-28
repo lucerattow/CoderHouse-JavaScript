@@ -1,4 +1,3 @@
-//rents.js
 class apartment {
 	constructor(address, rent, expenses, sellValue) {
 		this.address = address;
@@ -16,44 +15,72 @@ apartments.push(new apartment("Av Las Heras al 2300", 55000, 12000, 0));
 apartments.push(new apartment("Sarmiento al 2100", 45000, 5500, 0));
 apartments.push(new apartment("AV. DEL Libertador AL 5500", 55000, 12000, 0));
 
-function rentsInitialize() {
-	let displayMessage = "Listado de alquileres:\n\n";
-	apartments.forEach(element => (displayMessage += `Direccion: ${element.address}\nAlquiler: ${element.rent}\nExpensas: ${element.expenses}\n\n`));
-
-	alert(displayMessage);
-}
-
-//surety.js (no se como importar funciones, vi como hacerlo pero no me funciona asi que ya fue jaja)
 const sureValue = 2.5;
 const inst3 = 1.1;
 const inst6 = 1.2;
 const inst12 = 1.4;
 
-function suretyInitialize() {
-	alert("Calcular valor de seguro de caucion\n\n");
+main();
 
-	let rent = parseInt(prompt("Por favor ingresa el valor del alquiler (mensual):"));
-	let expenses = parseInt(prompt("Por favor ingresa el valor de las expensas:"));
+function main() {
+	const button = document.getElementById("btnSubmit");
+	button.addEventListener("click", btnSubmit_click);
+
+	function btnSubmit_click() {
+		const input = document.getElementById("inputSelectedOption");
+		let option = parseInt(input.value);
+
+		switch (option) {
+			case 1:
+				suretyInitialize();
+				break;
+			case 2:
+				rentsDisplay(apartments);
+				break;
+			case 3:
+				rentsSearch();
+				break;
+		}
+	}
+}
+
+function suretyInitialize() {
+	const div = document.getElementById("formulario");
+	div.innerHTML = `
+		<p>Calcular valor de seguro de caucion</p>
+		<input id="inputRent" type="text" placeholder="ingrese el alquiler (mensual)"/>
+		<input id="inputExpenses" type="text" placeholder="ingrese las expensas (mensual)"/>
+		<button id="btnCalcSurety">calcular</button>
+		<div id="divResult"></div>
+	`;
+
+	const btnCalcSurety = document.getElementById("btnCalcSurety");
+	btnCalcSurety.addEventListener("click", btnCalcSurety_click);
+}
+
+function btnCalcSurety_click() {
+	const divResult = document.getElementById("divResult");
+	const inputRent = document.getElementById("inputRent");
+	const inputExpenses = document.getElementById("inputExpenses");
+	let rent = parseFloat(inputRent.value);
+	let expenses = parseFloat(inputExpenses.value);
 
 	if (!valueValidate(rent) || !valueValidate(expenses)) {
-		return null;
+		divResult.innerHTML = "<p>El valor ingresado no es valido, debe ser un numero mayor a 0</p>";
 	} else {
 		let value = suretyCalc(rent, expenses);
-		alert(
-			`El valor del seguro para ALQUILER: $${rent}, EXPENSAS: $${expenses} es de:\n` +
-				`Total en 1 pago: $${value}\n` +
-				`Cuota en 3 pagos: $${parseInt(installmentsCalc(value, 3) / 3)}; Total: $${installmentsCalc(value, 3)}\n` +
-				`Cuota en 6 pagos: $${parseInt(installmentsCalc(value, 6) / 6)}; Total: $${installmentsCalc(value, 6)}\n` +
-				`Cuota en 12 pagos: $${parseInt(installmentsCalc(value, 12) / 12)}; Total: $${installmentsCalc(value, 12)}`
-		);
+
+		divResult.innerHTML = `
+			<p>El valor del seguro para ALQUILER: $${rent}, EXPENSAS: $${expenses} es de:</p>
+			<p>Total en 1 pago: $${value}</p>
+			<p>Cuota en 3 pagos: $${parseInt(installmentsCalc(value, 3) / 3)}; Total: $${installmentsCalc(value, 3)}</p>
+			<p>Cuota en 6 pagos: $${parseInt(installmentsCalc(value, 6) / 6)}; Total: $${installmentsCalc(value, 6)}</p>
+			<p>Cuota en 12 pagos: $${parseInt(installmentsCalc(value, 12) / 12)}; Total: $${installmentsCalc(value, 12)}</p>`;
 	}
 }
 
 function valueValidate(value) {
-	if (value <= 0) {
-		alert("El valor ingresado no es valido, debe ser un numero mayor a 0");
-		return false;
-	}
+	if (value <= 0) return false;
 	return true;
 }
 
@@ -74,20 +101,41 @@ function installmentsCalc(subtotal, installments) {
 	}
 }
 
-//code.js
-function main() {
-	let option = parseInt(
-		prompt("Seleccionar una de las siguientes funciones:\n" + "1. Calcular costo seguro de caucion\n" + "2. Mostrar alquileres disponibles")
-	);
+function rentsDisplay(Apartments) {
+	const div = document.getElementById("formulario");
+	div.innerHTML = `
+		<p>Listado de alquileres:</p>
+		<br>
+	`;
 
-	switch (option) {
-		case 1:
-			suretyInitialize();
-			break;
-		case 2:
-			rentsInitialize();
-			break;
+	for (const x of Apartments) {
+		const apartDiv = document.createElement("div");
+		apartDiv.innerHTML = `
+			<p>Direccion: ${x.address}</p>
+			<p>Alquiler: ${x.rent}</p>
+			<p>Expensas: ${x.expenses}</p>
+			<br>
+		`;
+		div.append(apartDiv);
 	}
 }
 
-main();
+function rentsSearch() {
+	const div = document.getElementById("formulario");
+	div.innerHTML = `
+		<p>Ingrese la direccion del departamento que desea buscar</p>
+		<input id="inputSearch" type="text" />
+		<button id="btnSearch">buscar</button>
+		<br>
+	`;
+
+	const btnSearch = document.getElementById("btnSearch");
+	btnSearch.addEventListener("click", btnSearch_click);
+}
+
+function btnSearch_click() {
+	const inputSearch = document.getElementById("inputSearch");
+
+	const result = apartments.filter(x => x.address.includes(inputSearch.value));
+	rentsDisplay(result);
+}
